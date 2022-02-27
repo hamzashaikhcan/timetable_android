@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "13644236996",
+    "project_id": "superior-timetable",
+    "storage_bucket": "superior-timetable.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13644236996:android:51f3ef91c82abad84fa191",
+        "android_client_info": {
+          "package_name": "com.sambeel.timetable"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13644236996-se17mmq59kggmtpmnln91fg61afnuom3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL8K1EAqpymu4SesCjERfoj9FW65qABtY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13644236996-se17mmq59kggmtpmnln91fg61afnuom3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

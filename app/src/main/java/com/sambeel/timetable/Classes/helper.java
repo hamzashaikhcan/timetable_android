@@ -1,7 +1,10 @@
 package com.sambeel.timetable.Classes;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.sambeel.timetable.R;
+import com.sambeel.timetable.Services.MyBroadcastReceiver;
 
 
 public class helper {
@@ -27,6 +31,7 @@ public class helper {
     Context mCtx;
     FragmentManager fragmentManager;
     FragmentTransaction ft;
+    int requestCode = 280192;
 
     public helper(Context mCtx) {
 
@@ -47,6 +52,16 @@ public class helper {
         }else{
             return true;
         }
+    }
+
+    public void cancelAlarm() {
+
+        AlarmManager alarmManager2 = (AlarmManager) mCtx.getSystemService(Context.ALARM_SERVICE);
+
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(mCtx.getApplicationContext(),requestCode,new Intent(mCtx, MyBroadcastReceiver.class),0);
+        alarmManager2.cancel(pendingIntent2);
+
+//        Toast.makeText(mCtx.getApplicationContext(), "Alarm Cancelled - "+ requestCode, Toast.LENGTH_LONG).show();
     }
 
     public void replaceFragment(Fragment fragment){

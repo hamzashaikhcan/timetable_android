@@ -1,16 +1,20 @@
 package com.sambeel.timetable.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,9 +26,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.sambeel.timetable.Classes.base_url;
 import com.sambeel.timetable.Classes.helper;
 import com.sambeel.timetable.R;
+import com.sambeel.timetable.Services.ForegroundService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import dmax.dialog.SpotsDialog;
 
@@ -34,15 +45,33 @@ public class MainActivity extends AppCompatActivity {
     Button login;
     EditText email, password;
 
-    String URL = new base_url().getUrl()+"login";
+    String URL = new base_url().getBaseUrl();
 
     SpotsDialog dialog;
     helper hp;
+
+    String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("FIREBASE TOKEN", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        token = task.getResult();
+
+                       Log.w("FIREBASE TOKEN", "FIREBASE TOKEN => "+ token);
+                    }
+                });
 
         SharedPreferences prefs = getSharedPreferences("USER_PREFS", 0);
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
@@ -58,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     public void init(){
         email = findViewById(R.id.emailEditText);
@@ -88,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             String pass = password.getText().toString().trim();
             String finalURL = URL+"&email="+em+"&password="+pass;
 
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, finalURL, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
 
@@ -150,7 +180,22 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
                     dialog.cancel();
                 }
-            });
+            }){
+
+                @Override
+                protected Map<String, String> getParams()  {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    params.put("token", token);
+                    params.put("email", em);
+                    params.put("password", pass);
+                    params.put("action", "login");
+
+
+
+                    return params;
+                }
+            };
 
             RequestQueue requestque = Volley.newRequestQueue(MainActivity.this);
             requestque.add(stringRequest);

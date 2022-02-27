@@ -1,9 +1,11 @@
 package com.sambeel.timetable.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import com.sambeel.timetable.Classes.Timetable;
 import com.sambeel.timetable.Classes.base_url;
 import com.sambeel.timetable.Classes.helper;
 import com.sambeel.timetable.R;
+import com.sambeel.timetable.Services.ForegroundService;
 
 import dmax.dialog.SpotsDialog;
 
@@ -50,12 +53,16 @@ public class TimeTableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
 
+//        startService();
+
         init();
         getData();
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hp.cancelAlarm();
+//                stopService();
                 performLogout();
             }
         });
@@ -68,6 +75,16 @@ public class TimeTableActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void startService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        serviceIntent.putExtra("inputExtra", "Superior Foreground Service");
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        stopService(serviceIntent);
     }
 
     public void init(){
